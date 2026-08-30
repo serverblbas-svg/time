@@ -1,0 +1,67 @@
+Do
+    Try
+        ' ١. وەرگرتنی مانگ، ڕۆژ و کاتی ئێستای کۆمپیوتەر
+        Dim curMonth As String = DateTime.Now.Month.ToString()
+        Dim curDay As String = DateTime.Now.Day.ToString()
+        Dim curTime As String = DateTime.Now.ToString("HH:mm")
+
+        ' ٢. فایلی کاتەکان لە درایڤی F
+        Dim filePath As String = "F:\erbil.csv"
+        
+        If System.IO.File.Exists(filePath) Then
+            Dim lines() As String = System.IO.File.ReadAllLines(filePath)
+            
+            For Each line As String In lines
+                Dim parts() As String = line.Split(","c)
+                
+                If parts.Length >= 4 Then
+                    ' دۆزینەوەی مانگ و ڕۆژی ئەمڕۆ
+                    If parts(1).Trim() = curMonth AndAlso parts(2).Trim() = curDay Then
+                        Dim times() As String = parts(3).Trim().Split("|"c)
+                        
+                        If times.Length >= 6 Then
+                            ' ١. نوێژی بەیانی -> Input 1
+                            If curTime = times(0) Then
+                                API.Function("Restart", "1")
+                                API.Function("CutDirect", "1")
+                                Sleep(70000)
+                                Exit For
+
+                            ' ٢. نوێژی نیوەڕۆ -> Input 2
+                            ElseIf curTime = times(2) Then
+                                API.Function("Restart", "2")
+                                API.Function("CutDirect", "2")
+                                Sleep(70000)
+                                Exit For
+
+                            ' ٣. نوێژی عەسر -> Input 3
+                            ElseIf curTime = times(3) Then
+                                API.Function("Restart", "3")
+                                API.Function("CutDirect", "3")
+                                Sleep(70000)
+                                Exit For
+
+                            ' ٤. نوێژی مەغریب -> Input 4
+                            ElseIf curTime = times(4) Then
+                                API.Function("Restart", "4")
+                                API.Function("CutDirect", "4")
+                                Sleep(70000)
+                                Exit For
+
+                            ' ٥. نوێژی عیشا -> Input 5
+                            ElseIf curTime = times(5) Then
+                                API.Function("Restart", "5")
+                                API.Function("CutDirect", "5")
+                                Sleep(70000)
+                                Exit For
+                            End If
+                        End If
+                    End If
+                End If
+            Next
+        End If
+    Catch ex As Exception
+    End Try
+
+    Sleep(3000)
+Loop
