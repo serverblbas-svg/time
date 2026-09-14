@@ -2,7 +2,7 @@
 <html lang="ckb" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>SPI TV HD - Overlay</title>
+    <title>Overlay</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
 
@@ -58,25 +58,6 @@
         .overlay-box {
             position: absolute;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.7);
-        }
-
-        /* 📺 ناوی کەناڵ */
-        .top-left {
-            top: -20px;
-            left: 0px;
-        }
-
-        .channel-logo {
-            font-family: 'Amiri', 'Noto Naskh Arabic', serif;
-            font-size: 42px;
-            font-weight: 700;
-            color: #ffffff;
-            background: rgba(0, 0, 0, 0.35);
-            padding: 6px 24px;
-            border-radius: 12px;
-            border-right: 4px solid #ffd700;
-            backdrop-filter: blur(4px);
-            letter-spacing: 1px;
         }
 
         /* 📅 مێژوو */
@@ -195,8 +176,6 @@
            📱 مۆبایل
            ============================================================ */
         @media (max-width: 768px) {
-            .top-left { top: 12px; left: 16px; }
-            .channel-logo { font-size: 28px; padding: 4px 16px; }
             .bottom-left { bottom: 16px; left: 16px; gap: 6px; }
             .bottom-right { bottom: 16px; right: 16px; gap: 8px; }
             .clock-box { padding: 4px 14px; gap: 10px; flex-wrap: wrap; }
@@ -213,7 +192,6 @@
         @media (max-width: 480px) {
             .time-display { font-size: 24px; }
             .date-display { font-size: 18px; }
-            .channel-logo { font-size: 20px; padding: 3px 12px; }
             .prayer-badge .time { font-size: 13px; min-width: 50px; }
             .prayer-badge .name { font-size: 11px; }
             .prayer-badge { padding: 2px 10px; }
@@ -229,15 +207,10 @@
          ============================================================ -->
     <div class="scanline-overlay"></div>
 
-    <!-- 📺 ناوی کەناڵ -->
-    <div class="overlay-box top-left">
-        <div class="channel-logo">SPI TV HD</div>
-    </div>
-
     <!-- 📅 مێژوو -->
     <div class="overlay-box bottom-left">
         <div class="date-box">
-            <span class="date-display" id="dateDisplay">٢ - ربيع الثاني - ١٤٤٨</span>
+            <span class="date-display" id="dateDisplay">-- - --- - ----</span>
             <span class="date-label" id="dateLabel">هـ</span>
         </div>
     </div>
@@ -648,7 +621,7 @@
             const times = data.split('|');
             return times.map(t => {
                 const parts = t.split(':');
-                return { hours: parseInt(parts[0]), minutes: parseInt(parts[1]) };
+                return { hours: parseInt(parts[0]), minutes: parseInt(parts) };
             });
         }
 
@@ -747,7 +720,12 @@
 
             let dateText, dateLabel;
             if (cycle >= 10) {
-                dateText = "٢ - ربيع الثاني - ١٤٤٨";
+                const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                dateText = hijriFormatter.format(now);
                 dateLabel = "هـ";
             } else {
                 const year = now.getFullYear();
@@ -787,8 +765,6 @@
         updateClock();
         updateDate();
         updatePrayerBadge();
-
-        console.log('🐱 SPI TV HD - وەشانی سادە (ترانزیشنی ڕەش و سپی)');
     </script>
 
 </body>
