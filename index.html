@@ -1,7 +1,7 @@
 <div style="font-family: Tahoma, sans-serif; display: inline-flex; align-items: center; gap: 15px; font-size: 18px; color: #333;">
     <div style="display: inline-flex; align-items: center; gap: 5px;">
         <span>🌙</span>
-        <span id="current-date"></span>
+        <span>دووشەممە ١٧-ربیع الاخر-١٤٤٨</span>
     </div>
     <span style="color: #ccc;">|</span>
     <div style="display: inline-flex; align-items: center; gap: 5px;">
@@ -9,11 +9,3 @@
         <span>هەولێر: 35°C (ساماڵ)</span>
     </div>
 </div>
-
-<script>
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const year = now.getFullYear();
-    document.getElementById('current-date').textContent = `${day}/${month}/${year}`;
-</script>
