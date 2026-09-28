@@ -19,7 +19,7 @@ async function fetchWeather() {
         const lon = ipData.longitude;
         const cityName = ipData.city || "هەولێر";
 
-        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const weatherRes = await fetch(`https://www.accuweather.com/en/iq/erbil/206937/weather-forecast/206937`);
         const weatherData = await weatherRes.json();
         
         // بەکارهێنانی پلەی گەرمای داواکراو (٣١) بۆ پشتڕاستکردنەوە ئەگەر پێویست بکات، یان دەتوانیت پشت بە API ببەستیت. لێرەدا دەکرێت بە شێوازی خۆکار بمێنێت یان جێگیر بکرێت.
