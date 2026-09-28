@@ -13,17 +13,19 @@
 <script>
 async function fetchWeather() {
     try {
+        // وەرگرتنی شوێن بە پێی IP
         const ipRes = await fetch('https://ipapi.co/json/');
         const ipData = await ipRes.json();
-        const lat = ipData.latitude;
-        const lon = ipData.longitude;
+        const lat = ipData.latitude || 36.1901; // هێڵی پانی هەولێر وەک یەدەگ
+        const lon = ipData.longitude || 44.0091; // هێڵی درێژی هەولێر وەک یەدەگ
         const cityName = ipData.city || "هەولێر";
 
-        const weatherRes = await fetch(`https://www.accuweather.com/en/iq/erbil/206937/weather-forecast/206937`);
+        // وەرگرتنی کەشوهەوا لە API ی فەرمی و بێبەرامبەر
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const weatherData = await weatherRes.json();
         
-        // بەکارهێنانی پلەی گەرمای داواکراو (٣١) بۆ پشتڕاستکردنەوە ئەگەر پێویست بکات، یان دەتوانیت پشت بە API ببەستیت. لێرەدا دەکرێت بە شێوازی خۆکار بمێنێت یان جێگیر بکرێت.
-        const temp = 31; // جێگیرکردنی پلەی گەرما لەسەر ٣١ وەک داواکارییەکەت
+        // دەتوانیت پلەی گەرما لە API وە بخوێنیت یان ئەگەر دەتەوێت هەمیشە ٣١ بێت دەتوانیت جێگیری بکەیت
+        const temp = Math.round(weatherData.current_weather.temperature) || 31;
         
         const wCode = weatherData.current_weather.weathercode;
         let condition = "ساماڵ";
@@ -40,9 +42,13 @@ async function fetchWeather() {
         document.getElementById('weather-text').innerText = `${cityName}: ${temp}°C (${condition})`;
         document.getElementById('weather-icon').innerText = icon;
     } catch (error) {
+        // ئەگەر هێڵی ئینتەرنێت کێشەی هەبوو، ئەم داتایە نیشان دەدات
         document.getElementById('weather-text').innerText = "هەولێر: 31°C (ساماڵ)";
     }
 }
+
+// بانگکردنی فەنکشنەکە لە سەرەتادا
+fetchWeather();
 
 // نوێکردنەوەی خۆکار هەموو ٥ خولەک جارێک (300000 ملی چرکە)
 setInterval(fetchWeather, 300000);
