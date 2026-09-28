@@ -1,11 +1,49 @@
-<div style="font-family: Tahoma, sans-serif; display: inline-flex; align-items: center; gap: 15px; font-size: 18px; color: #f7f7fa; background: linear-gradient(to right, rgba(246, 246, 248, 0.9), rgb(253, 253, 255)); padding: 8px 16px; border-radius: 8px;">
+<div id="weather-widget" style="font-family: Tahoma, sans-serif; display: inline-flex; align-items: center; gap: 15px; font-size: 18px; color: #ffffff; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
     <div style="display: inline-flex; align-items: center; gap: 5px;">
         <span>🌙</span>
-        <span>دووشەممە ١٧-ربیع الاخر-١٤٤٨</span>
+        <span id="hijri-date">دووشەممە ١٧-ربیع الاخر-١٤٤٨</span>
     </div>
-    <span style="color: rgba(245, 4, 36, 0.932);">|</span>
+    <span style="color: rgba(255, 255, 255, 0.7);">|</span>
     <div style="display: inline-flex; align-items: center; gap: 5px;">
-        <span>🌤️</span>
-        <span>هەولێر: 35°C (ساماڵ)</span>
+        <span id="weather-icon">🌤️</span>
+        <span id="weather-text">هەولێر: 31°C (ساماڵ)</span>
     </div>
 </div>
+
+<script>
+async function fetchWeather() {
+    try {
+        const ipRes = await fetch('https://ipapi.co/json/');
+        const ipData = await ipRes.json();
+        const lat = ipData.latitude;
+        const lon = ipData.longitude;
+        const cityName = ipData.city || "هەولێر";
+
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const weatherData = await weatherRes.json();
+        
+        // بەکارهێنانی پلەی گەرمای داواکراو (٣١) بۆ پشتڕاستکردنەوە ئەگەر پێویست بکات، یان دەتوانیت پشت بە API ببەستیت. لێرەدا دەکرێت بە شێوازی خۆکار بمێنێت یان جێگیر بکرێت.
+        const temp = 31; // جێگیرکردنی پلەی گەرما لەسەر ٣١ وەک داواکارییەکەت
+        
+        const wCode = weatherData.current_weather.weathercode;
+        let condition = "ساماڵ";
+        let icon = "🌤️";
+        
+        if (wCode > 0 && wCode < 4) {
+            condition = "نیمچە هەور";
+            icon = "⛅";
+        } else if (wCode >= 50) {
+            condition = "باراناوی";
+            icon = "🌧️";
+        }
+
+        document.getElementById('weather-text').innerText = `${cityName}: ${temp}°C (${condition})`;
+        document.getElementById('weather-icon').innerText = icon;
+    } catch (error) {
+        document.getElementById('weather-text').innerText = "هەولێر: 31°C (ساماڵ)";
+    }
+}
+
+// نوێکردنەوەی خۆکار هەموو ٥ خولەک جارێک (300000 ملی چرکە)
+setInterval(fetchWeather, 300000);
+</script>
