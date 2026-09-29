@@ -1,7 +1,7 @@
 <div id="weather-widget" style="font-family: Tahoma, sans-serif; display: inline-flex; align-items: center; gap: 15px; font-size: 18px; color: #ffffff; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
     <div style="display: inline-flex; align-items: center; gap: 5px;">
         <span>🌙</span>
-        <span id="hijri-date">دووشەممە ١٧-ربیع الاخر-١٤٤٨</span>
+        <span id="hijri-date">دەبارێت...</span>
     </div>
     <span style="color: rgba(255, 255, 255, 0.7);">|</span>
     <div style="display: inline-flex; align-items: center; gap: 5px;">
@@ -11,22 +11,44 @@
 </div>
 
 <script>
+// وەرگرتنی بەرواری هیجری بە شێوەی خۆکار
+function updateHijriDate() {
+    try {
+        const options = { calendar: 'islamic-umalqura', day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
+        const formatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', options);
+        const parts = formatter.formatToParts(new Date());
+        
+        let dayName = '', dayNum = '', monthName = '', yearNum = '';
+        
+        parts.forEach(part => {
+            if (part.type === 'weekday') dayName = part.value;
+            if (part.type === 'day') dayNum = part.value;
+            if (part.type === 'month') monthName = part.value;
+            if (part.type === 'year') yearNum = part.value;
+        });
+
+        // گۆڕینی ناوە عەربییەکانی مانگەکان بۆ کوردی یان شێوازی داواکراو ئەگەر پێویست بکات
+        document.getElementById('hijri-date').innerText = `${dayName} ${dayNum}-${monthName}-${yearNum}`;
+    } catch (e) {
+        // یەدەگ ئەگەر وێبگەڕەکە پشتگیری نەکات
+        document.getElementById('hijri-date').innerText = "دووشەممە ١٧-ربیع الاخر-١٤٤٨";
+    }
+}
+
 async function fetchWeather() {
     try {
         // وەرگرتنی شوێن بە پێی IP
         const ipRes = await fetch('https://ipapi.co/json/');
         const ipData = await ipRes.json();
-        const lat = ipData.latitude || 36.1901; // هێڵی پانی هەولێر وەک یەدەگ
-        const lon = ipData.longitude || 44.0091; // هێڵی درێژی هەولێر وەک یەدەگ
+        const lat = ipData.latitude || 36.1901; 
+        const lon = ipData.longitude || 44.0091; 
         const cityName = ipData.city || "هەولێر";
 
         // وەرگرتنی کەشوهەوا لە API ی فەرمی و بێبەرامبەر
         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const weatherData = await weatherRes.json();
         
-        // دەتوانیت پلەی گەرما لە API وە بخوێنیت یان ئەگەر دەتەوێت هەمیشە ٣١ بێت دەتوانیت جێگیری بکەیت
         const temp = Math.round(weatherData.current_weather.temperature) || 31;
-        
         const wCode = weatherData.current_weather.weathercode;
         let condition = "ساماڵ";
         let icon = "🌤️";
@@ -42,14 +64,14 @@ async function fetchWeather() {
         document.getElementById('weather-text').innerText = `${cityName}: ${temp}°C (${condition})`;
         document.getElementById('weather-icon').innerText = icon;
     } catch (error) {
-        // ئەگەر هێڵی ئینتەرنێت کێشەی هەبوو، ئەم داتایە نیشان دەدات
         document.getElementById('weather-text').innerText = "هەولێر: 31°C (ساماڵ)";
     }
 }
 
-// بانگکردنی فەنکشنەکە لە سەرەتادا
+// جێبەجێکردنی فەنکشنەکان لە سەرەتادا
+updateHijriDate();
 fetchWeather();
 
-// نوێکردنەوەی خۆکار هەموو ٥ خولەک جارێک (300000 ملی چرکە)
+// نوێکردنەوەی کەشوهەوا هەموو ٥ خولەک جارێک
 setInterval(fetchWeather, 300000);
 </script>
