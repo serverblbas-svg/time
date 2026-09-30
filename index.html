@@ -27,24 +27,20 @@ function updateHijriDate() {
             if (part.type === 'year') yearNum = part.value;
         });
 
-        // گۆڕینی ناوە عەربییەکانی مانگەکان بۆ کوردی یان شێوازی داواکراو ئەگەر پێویست بکات
         document.getElementById('hijri-date').innerText = `${dayName} ${dayNum}-${monthName}-${yearNum}`;
     } catch (e) {
-        // یەدەگ ئەگەر وێبگەڕەکە پشتگیری نەکات
         document.getElementById('hijri-date').innerText = "دووشەممە ١٧-ربیع الاخر-١٤٤٨";
     }
 }
 
 async function fetchWeather() {
     try {
-        // وەرگرتنی شوێن بە پێی IP
         const ipRes = await fetch('https://ipapi.co/json/');
         const ipData = await ipRes.json();
         const lat = ipData.latitude || 36.1901; 
         const lon = ipData.longitude || 44.0091; 
         const cityName = ipData.city || "هەولێر";
 
-        // وەرگرتنی کەشوهەوا لە API ی فەرمی و بێبەرامبەر
         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const weatherData = await weatherRes.json();
         
@@ -71,6 +67,9 @@ async function fetchWeather() {
 // جێبەجێکردنی فەنکشنەکان لە سەرەتادا
 updateHijriDate();
 fetchWeather();
+
+// پشکنینی خۆکار بۆ نوێکردنەوەی بەروار هەموو کاتژمێرێک (3600000 ملی چرکە) بێ ئەوەی پێویست بە ڕێفرێش بکات
+setInterval(updateHijriDate, 3600000);
 
 // نوێکردنەوەی کەشوهەوا هەموو ٥ خولەک جارێک
 setInterval(fetchWeather, 300000);
